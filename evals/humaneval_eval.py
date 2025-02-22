@@ -1,7 +1,7 @@
 """
 HumanEval: Evaluating Large Language Models Trained on Code
-Mark Chen and Jerry Tworek and Heewoo Jun and Qiming Yuan and Henrique Ponde de Oliveira Pinto and Jared Kaplan and Harri Edwards and Yuri Burda and Nicholas Joseph and Greg Brockman and Alex Ray and Raul Puri and Gretchen Krueger and Michael Petrov and Heidy Khlaaf and Girish Sastry and Pamela Mishkin and Brooke Chan and Scott Gray and Nick Ryder and Mikhail Pavlov and Alethea Power and Lukasz Kaiser and Mohammad Bavarian and Clemens Winter and Philippe Tillet and Felipe Petroski Such and Dave Cummings and Matthias Plappert and Fotios Chantzis and Elizabeth Barnes and Ariel Herbert-Voss and William Hebgen Guss and Alex Nichol and Alex Paino and Nikolas Tezak and Jie Tang and Igor Babuschkin and Suchir Balaji and Shantanu Jain and William Saunders and Christopher Hesse and Andrew N. Carr and Jan Leike and Josh Achiam and Vedant Misra and Evan Morikawa and Alec Radford and Matthew Knight and Miles Brundage and Mira Murati and Katie Mayer and Peter Welinder and Bob McGrew and Dario Amodei and Sam McCandlish and Ilya Sutskever and Wojciech Zaremba 
-https://arxiv.org/abs/2107.03374 https://github.com/openai/human-eval/ 
+Mark Chen and Jerry Tworek and Heewoo Jun and Qiming Yuan and Henrique Ponde de Oliveira Pinto and Jared Kaplan and Harri Edwards and Yuri Burda and Nicholas Joseph and Greg Brockman and Alex Ray and Raul Puri and Gretchen Krueger and Michael Petrov and Heidy Khlaaf and Girish Sastry and Pamela Mishkin and Brooke Chan and Scott Gray and Nick Ryder and Mikhail Pavlov and Alethea Power and Lukasz Kaiser and Mohammad Bavarian and Clemens Winter and Philippe Tillet and Felipe Petroski Such and Dave Cummings and Matthias Plappert and Fotios Chantzis and Elizabeth Barnes and Ariel Herbert-Voss and William Hebgen Guss and Alex Nichol and Alex Paino and Nikolas Tezak and Jie Tang and Igor Babuschkin and Suchir Balaji and Shantanu Jain and William Saunders and Christopher Hesse and Andrew N. Carr and Jan Leike and Josh Achiam and Vedant Misra and Evan Morikawa and Alec Radford and Matthew Knight and Miles Brundage and Mira Murati and Katie Mayer and Peter Welinder and Bob McGrew and Dario Amodei and Sam McCandlish and Ilya Sutskever and Wojciech Zaremba
+https://arxiv.org/abs/2107.03374 https://github.com/openai/human-eval/
 """
 
 import json
@@ -76,18 +76,12 @@ class HumanEval(Eval):
             pattern = re.compile(r"```python\n(.*?)```", re.DOTALL)
             matches = pattern.findall(completion)
             extracted_answer = matches[0] if len(matches) >= 1 else completion
-            extracted_answer = extracted_answer[
-                extracted_answer.find(":\n    ") + 2 :
-            ]  # remove signature
+            extracted_answer = extracted_answer[extracted_answer.find(":\n    ") + 2 :]  # remove signature
             return extracted_answer
 
         def fn(sample: dict[str, str]):
-            prompt_messages = [
-                sampler._pack_message(role="user", content=instruction + sample["prompt"])
-            ]
-            completions = [
-                find_code(sampler(prompt_messages)) for _ in range(self._num_samples_per_task)
-            ]
+            prompt_messages = [sampler._pack_message(role="user", content=instruction + sample["prompt"])]
+            completions = [find_code(sampler(prompt_messages)) for _ in range(self._num_samples_per_task)]
             results = evaluate_functional_correctness(sample, completions)
             total = len(results)
             correct = sum(results)
@@ -99,19 +93,18 @@ class HumanEval(Eval):
                 correct_answer=[1] * len(results),
                 extracted_answer=results,
             )
-            convo = prompt_messages + [
-                dict(content=completion, role="assistant") for completion in completions
-            ]
+            convo = prompt_messages + [dict(content=completion, role="assistant") for completion in completions]
+            metrics = {
+                f"pass@{k}": estimate_pass_at_k([total], [correct], k).tolist()
+                # this will be aggrated so no need of .mean()
+                for k in self._ks_passes
+                if total >= k
+            }
             return SingleEvalResult(
                 html=html,
                 score=score,
-                convo=convo,
-                metrics={
-                    f"pass@{k}": estimate_pass_at_k([total], [correct], k)
-                    # this will be aggrated so no need of .mean()
-                    for k in self._ks_passes
-                    if total >= k
-                },
+                metrics=metrics,
+                result=dict(example=sample, convo=convo, metrics=metrics),
             )
 
         results = common.map_with_progress(fn, self.examples, num_threads=3)

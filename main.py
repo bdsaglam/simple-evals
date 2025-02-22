@@ -181,21 +181,21 @@ def write_results(result: any, eval_name: str, model_name: str, output_dir: Path
     """Write evaluation results to files and return result filename."""
     output_dir.mkdir(exist_ok=True)
 
-    file_stem = f"{eval_name}_{model_name}"
+    file_stem = f"{eval_name}--{model_name}"
 
     # Write HTML report
-    report_filename = output_dir / f"{file_stem}-report.html"
+    report_filename = output_dir / f"{file_stem}--report.html"
     report_filename.write_text(common.make_report(result))
     typer.echo(f"Writing report to {report_filename}")
 
     # Write metrics
-    metrics_filename = output_dir / f"{file_stem}-metrics.json"
+    metrics_filename = output_dir / f"{file_stem}--metrics.json"
     metrics = result.metrics | {"score": result.score}
     metrics_filename.write_text(json.dumps(metrics, indent=2))
     typer.echo(f"Writing results to {metrics_filename}")
 
     # Write results
-    results_filename = output_dir / f"{file_stem}-results.json"
+    results_filename = output_dir / f"{file_stem}--results.json"
     results_filename.write_text(json.dumps(result.results, indent=2))
     typer.echo(f"Writing results to {results_filename}")
     return str(metrics_filename)
