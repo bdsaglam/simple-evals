@@ -7,6 +7,7 @@ https://arxiv.org/abs/2311.12022
 import random
 import re
 
+import logfire
 import pandas
 
 import common
@@ -32,6 +33,7 @@ class GPQAEval(Eval):
         self.examples = examples
         self.n_repeats = n_repeats
 
+    @logfire.instrument("Answering question in DROP dataset")
     def __call__(self, sampler: SamplerBase) -> EvalResult:
         def fn(row: dict):
             choices = [
