@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 import common
-from mmlu_eval import MMLUEval
+from evals.mmlu_eval import MMLUEval
 from sampler.chat_completion_sampler import (
     OPENAI_SYSTEM_MESSAGE_API,
     OPENAI_SYSTEM_MESSAGE_CHATGPT,

@@ -9,7 +9,7 @@ import re
 from typing import Optional
 
 import common
-from mmlu_eval import HTML_JINJA
+from evals.mmlu_eval import HTML_JINJA
 from custom_types import Eval, EvalResult, SamplerBase, SingleEvalResult
 
 ALL_LANGUAGES = ["bn", "de", "en", "es", "fr", "ja", "ru", "sw", "te", "th", "zh"]

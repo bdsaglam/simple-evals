@@ -13,12 +13,12 @@ import typer
 from dotenv import load_dotenv
 
 import common
-from drop_eval import DropEval
-from gpqa_eval import GPQAEval
-from humaneval_eval import HumanEval
-from math_eval import MathEval
-from mgsm_eval import MGSMEval
-from mmlu_eval import MMLUEval
+from evals.drop_eval import DropEval
+from evals.gpqa_eval import GPQAEval
+from evals.humaneval_eval import HumanEval
+from evals.math_eval import MathEval
+from evals.mgsm_eval import MGSMEval
+from evals.mmlu_eval import MMLUEval
 from sampler.chat_completion_sampler import (
     OPENAI_SYSTEM_MESSAGE_API,
     OPENAI_SYSTEM_MESSAGE_CHATGPT,
@@ -26,7 +26,7 @@ from sampler.chat_completion_sampler import (
 )
 from sampler.claude_sampler import CLAUDE_SYSTEM_MESSAGE_LMSYS, ClaudeCompletionSampler
 from sampler.o_chat_completion_sampler import OChatCompletionSampler
-from simpleqa_eval import SimpleQAEval
+from evals.simpleqa_eval import SimpleQAEval
 
 # Load environment variables
 load_dotenv()
