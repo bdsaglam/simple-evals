@@ -21,9 +21,7 @@ class GPQAEval(Eval):
         variant: str = "diamond",
         num_examples: int | None = None,  # restrict to a subset of the data for debugging
     ):
-        df = pandas.read_csv(
-            f"https://openaipublic.blob.core.windows.net/simple-evals/gpqa_{variant}.csv"
-        )
+        df = pandas.read_csv(f"https://openaipublic.blob.core.windows.net/simple-evals/gpqa_{variant}.csv")
         examples = [row.to_dict() for _, row in df.iterrows()]
         rng = random.Random(0)
         if num_examples:
@@ -45,14 +43,8 @@ class GPQAEval(Eval):
             choices = [choices[i] for i in row["permutation"]]
             correct_index = choices.index(row["Correct Answer"])
             correct_answer = "ABCD"[correct_index]
-            choices_dict = dict(
-                A=choices[0], B=choices[1], C=choices[2], D=choices[3], Question=row["Question"]
-            )
-            prompt_messages = [
-                sampler._pack_message(
-                    content=format_multichoice_question(choices_dict), role="user"
-                )
-            ]
+            choices_dict = dict(A=choices[0], B=choices[1], C=choices[2], D=choices[3], Question=row["Question"])
+            prompt_messages = [sampler._pack_message(content=format_multichoice_question(choices_dict), role="user")]
             response_text = sampler(prompt_messages)
             match = re.search(ANSWER_PATTERN_MULTICHOICE, response_text)
             extracted_answer = match.group(1) if match else None
@@ -65,8 +57,12 @@ class GPQAEval(Eval):
                 extracted_answer=extracted_answer,
             )
             convo = prompt_messages + [dict(content=response_text, role="assistant")]
+            metrics = {"chars": len(response_text)}
             return SingleEvalResult(
-                html=html, score=score, convo=convo, metrics={"chars": len(response_text)}
+                html=html,
+                score=score,
+                metrics=metrics,
+                result=dict(example=row, convo=convo, extracted_answer=extracted_answer, metrics=metrics),
             )
 
         results = common.map_with_progress(fn, self.examples)

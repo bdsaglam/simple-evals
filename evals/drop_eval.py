@@ -283,7 +283,7 @@ Think step by step, then write a line of the form "Answer: $ANSWER" at the end o
                         html=html,
                         score=score,
                         metrics=metrics,
-                        result=dict(example=example, convo=convo, metrics=metrics),
+                        result=dict(example=example, convo=convo, extracted_answer=extracted_answer, metrics=metrics),
                     )
 
         results = common.map_with_progress(fn, self.test_samples)
