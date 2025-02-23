@@ -67,5 +67,5 @@ class GPQAEval(Eval):
                 result=dict(example=row, convo=convo, extracted_answer=extracted_answer, metrics=metrics),
             )
 
-        results = common.map_with_progress(fn, self.examples, num_threads=2)
+        results = common.map_with_progress(fn, self.examples)
         return common.aggregate_results(results)

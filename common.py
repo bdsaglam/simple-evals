@@ -203,10 +203,15 @@ def aggregate_results(
     )
 
 
-def map_with_progress(f: callable, xs: list[Any], num_threads: int = 8):
+DEFAULT_NUM_THREADS = 4
+
+
+def map_with_progress(f: callable, xs: list[Any], num_threads: int | None = None):
     """
     Apply f to each element of xs, using a ThreadPool, and show progress.
     """
+    num_threads = num_threads or DEFAULT_NUM_THREADS
+
     if os.getenv("debug"):
         return list(map(f, tqdm(xs, total=len(xs))))
     else:

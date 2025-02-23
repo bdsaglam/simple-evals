@@ -237,8 +237,12 @@ def run(
     n_examples: Optional[int] = typer.Option(None, "-n", help="Number of examples to use (overrides default)"),
     out: Path = typer.Option(default=Path("tmp/"), help="Output directory"),
     debug: bool = typer.Option(False, help="Run in debug mode"),
+    n_threads: int = typer.Option(common.DEFAULT_NUM_THREADS, "-t", help="Number of threads to use"),
 ):
     """Run sampling and evaluations using different samplers and evaluations."""
+
+    common.DEFAULT_NUM_THREADS = n_threads
+
     models = get_available_models()
 
     if model:
