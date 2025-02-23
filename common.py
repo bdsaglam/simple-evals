@@ -203,7 +203,7 @@ def aggregate_results(
     )
 
 
-def map_with_progress(f: callable, xs: list[Any], num_threads: int = 50):
+def map_with_progress(f: callable, xs: list[Any], num_threads: int = 8):
     """
     Apply f to each element of xs, using a ThreadPool, and show progress.
     """

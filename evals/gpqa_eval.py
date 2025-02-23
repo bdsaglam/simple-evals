@@ -33,7 +33,7 @@ class GPQAEval(Eval):
         self.examples = examples
         self.n_repeats = n_repeats
 
-    @logfire.instrument("Answering question in DROP dataset")
+    @logfire.instrument("Answering question in GPQA dataset")
     def __call__(self, sampler: SamplerBase) -> EvalResult:
         def fn(row: dict):
             choices = [
@@ -67,5 +67,5 @@ class GPQAEval(Eval):
                 result=dict(example=row, convo=convo, extracted_answer=extracted_answer, metrics=metrics),
             )
 
-        results = common.map_with_progress(fn, self.examples)
+        results = common.map_with_progress(fn, self.examples, num_threads=2)
         return common.aggregate_results(results)
