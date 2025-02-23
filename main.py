@@ -158,7 +158,7 @@ def get_eval_instance(eval_name: str, debug_mode: bool, num_examples: Optional[i
             num_examples=examples,
             n_repeats=1 if debug_mode else 10,
         ),
-        "gpqa": lambda: GPQAEval(n_repeats=1 if debug_mode else 10, num_examples=examples),
+        "gpqa": lambda: GPQAEval(n_repeats=1 if debug_mode else 1, num_examples=examples),
         "mgsm": lambda: MGSMEval(num_examples_per_lang=10 if debug_mode else 250),
         "drop": lambda: DropEval(
             num_examples=10 if debug_mode else examples,
